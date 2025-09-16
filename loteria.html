@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Lotería Mexicana</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f8f9fa;
+    }
+    #card {
+      margin: 20px auto;
+      width: 300px;
+      border: 2px solid #333;
+      border-radius: 12px;
+      background: white;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      padding: 10px;
+    }
+    #card img {
+      width: 100%;
+      border-radius: 8px;
+    }
+    #history {
+      margin-top: 20px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 10px;
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background: gray;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎲 Lotería Mexicana 🎲</h1>
+  <div id="card">
+    <p>Presiona "Sacar carta" para comenzar</p>
+  </div>
+  <button onclick="drawCard()">Sacar carta</button>
+
+  <div id="history">
+    <h2>Historial</h2>
+    <ul id="historyList"></ul>
+  </div>
+
+  <script>
+    // Lista de cartas (aquí deberías poner las rutas reales de tus imágenes)
+    const cards = [
+      {name: "El Gallo", img: "cartas/1 el gallo-min.jpg"},
+      {name: "El Diablito", img: "cartas/2 el diablito-min.jpg"},
+      {name: "La Dama", img: "cartas/3 la dama-min.jpg"},
+      {name: "4 el catrin", img: "cartas/4 el catrin-min.jpg"},
+      {name: "5 el paraguas", img: "cartas/5 el paraguas-min.jpg"},
+      {name: "6 la sirena", img: "cartas/6-la-sirena-min.jpg"},
+      {name: "7 la escalera", img: "cartas/7 la escalera-min.jpg"},
+      {name: "8 la botella", img: "cartas/8 la botella-min.jpg"},
+      {name: "9 el barril", img: "cartas/9 el barril-min.jpg"},
+      {name: "10 arbol", img: "cartas/10 arbol-min.jpg"},
+      {name: "11 melon", img: "cartas/11 melon-min.jpg"},
+      {name: "12 el valiente", img: "cartas/12 el valiente-min.jpg"},
+      {name: "13 el gorrito", img: "cartas/13 el gorrito-min.jpg"},
+      {name: "14 la muerte", img: "cartas/14 la muerte-min.jpg"},
+      {name: "15 la pera", img: "cartas/15 la pera-min.jpg"},
+      {name: "16 la bandera", img: "cartas/16 la bandera-min.jpg"},
+      {name: "17 el bandolon", img: "cartas/17 el bandolon-min.jpg"},
+      {name: "18 el violoncello", img: "cartas/18 el violoncello-min.jpg"},
+      {name: "19 la garza", img: "cartas/19 la garza-min.jpg"},
+      {name: "20 el pajaro", img: "cartas/20 el pajaro-min.jpg"},
+      {name: "21 la mano", img: "cartas/21 la mano-min.jpg"},
+      {name: "22 la bota", img: "cartas/22 la bota-min.jpg"},
+      {name: "23 la luna", img: "cartas/23 la luna-min.jpg"},
+      {name: "24 el cotorro", img: "cartas/24 el cotorro-min.jpg"},
+      {name: "25 el borracho", img: "cartas/25 el borracho-min.jpg"},
+      {name: "26 el negrito", img: "cartas/26 el negrito-min.jpg"},
+      {name: "27 el corazon", img: "cartas/27 el corazon-min.jpg"},
+      {name: "28 la sandia", img: "cartas/28 la sandia-min.jpg"},
+      {name: "29 el tambor", img: "cartas/29 el tambor-min.jpg"},
+      {name: "30 el camaron", img: "cartas/30 el camaron-min.jpg"},
+      {name: "31 las jaras", img: "cartas/31 las jaras-min.jpg"},
+      {name: "32 el musico", img: "cartas/32 el musico-min.jpg"},
+      {name: "33 la arana", img: "cartas/33 la arana-min.jpg"},
+      {name: "34 el soldado", img: "cartas/34 el soldado-min.jpg"},
+      {name: "35 la estrella", img: "cartas/35 la estrella-min.jpg"},
+      {name: "36 el cazo", img: "cartas/36 el cazo-min.jpg"},
+      {name: "37 el mundo", img: "cartas/37 el mundo-min.jpg"},
+      {name: "38 el apache", img: "cartas/38 el apache-min.jpg"},
+      {name: "39 el nopal", img: "cartas/39 el nopal-min.jpg"},
+      {name: "40 el alacran", img: "cartas/40 el alacran-min.jpg"},
+      {name: "41 la rosa", img: "cartas/41 la rosa-min.jpg"},
+      {name: "42 la calavera", img: "cartas/42 la calavera-min.jpg"},
+      {name: "43 la campana", img: "cartas/43 la campana-min.jpg"},
+      {name: "44 el cantarito", img: "cartas/44 el cantarito-min.jpg"},
+      {name: "45 el venado", img: "cartas/45 el venado-min.jpg"},
+      {name: "46 el sol", img: "cartas/46 el sol-min.jpg"},
+      {name: "47 la corona", img: "cartas/47 la corona-min.jpg"},
+      {name: "48 la chalupa", img: "cartas/48 la chalupa-min.jpg"},
+      {name: "49 el pino", img: "cartas/49 el pino-min.jpg"},
+      {name: "50 el pescado", img: "cartas/50 el pescado-min.jpg"},
+      {name: "51 la palma", img: "cartas/51 la palma-min.jpg"},
+      {name: "52 la maceta", img: "cartas/52 la maceta-min.jpg"},
+      {name: "53 el arpa", img: "cartas/53 el arpa-min.jpg"},
+      {name: "54 la rana", img: "cartas/54 la rana-min.jpg"}
+    ];
+
+    let remaining = [...cards];
+    let history = [];
+
+    function drawCard() {
+      if (remaining.length === 0) {
+        alert("¡Ya salieron todas las cartas!");
+        return;
+      }
+      const index = Math.floor(Math.random() * remaining.length);
+      const card = remaining.splice(index, 1)[0]; // elimina y devuelve
+      history.push(card);
+
+      // Mostrar carta actual
+      document.getElementById("card").innerHTML = `
+        <img src="${card.img}" alt="${card.name}">
+        <h3>${card.name}</h3>
+      `;
+
+      // Agregar al historial
+      const li = document.createElement("li");
+      li.textContent = card.name;
+      document.getElementById("historyList").appendChild(li);
+
+      // Deshabilitar botón si ya no quedan cartas
+      if (remaining.length === 0) {
+        document.querySelector("button").disabled = true;
+      }
+    }
+  </script>
+</body>
+</html>
